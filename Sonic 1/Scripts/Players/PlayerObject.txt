@@ -12,9 +12,12 @@ public alias  65536 	: HITBOX_AUTO
 public alias  arrayPos6 : currentPlayer
 public alias  arrayPos7 : playerCount
 
-private alias object[0].value0	: Player.Rings
-private alias object[0].value32	: Player.FlightFunction
-private alias object[0].value33	: Player.SpindashFunction
+private alias 0 		: CHARACTER_SONIC
+private alias 1 		: CHARACTER_TAILS
+private alias 2 		: CHARACTER_KNUCKLES
+
+public alias object[0].value0	: player.rings
+public alias object[0].value0	: Player.Rings
 
 // Function declarations
 reserve function PlayerObject_ProcessPlayer
@@ -412,14 +415,14 @@ end function
 
 function PlayerObject_SwapPhysics
 	switch stage.playerListPos
-	case 0
-	case 3
+	case CHARACTER_SONIC
+	case CHARACTER_SONIC_AND_TAILS
 		temp0 = PlayerObject_SonicPhysicsTable
 		break
-	case 1
+	case CHARACTER_TAILS
 		temp0 = PlayerObject_TailsPhysicsTable
 		break
-	case 2
+	case CHARACTER_KNUCKLES
 		temp0 = PlayerObject_KnuxPhysicsTable
 		break
 	end switch
@@ -471,14 +474,14 @@ end function
 function PlayerObject_ProcessSuperForms
 	if PlayerObject_SuperState != 0
 		switch stage.playerListPos
-		case 0
-		case 3
+		case CHARACTER_SONIC
+		case CHARACTER_SONIC_AND_TAILS
 			CallFunction(PlayerObject_HandleSuperPalSonic)
 			break
-		case 1
+		case CHARACTER_TAILS
 			CallFunction(PlayerObject_HandleSuperPalTails)
 			break
-		case 2
+		case CHARACTER_KNUCKLES
 			CallFunction(PlayerObject_HandleSuperPalKnux)
 			break
 		end switch
@@ -488,14 +491,14 @@ function PlayerObject_ProcessSuperForms
 		PlayerObject_value1++
 		if PlayerObject_value1 == 60
 			PlayerObject_value1 = 0
-			Player.Rings--
-			if Player.Rings == 0
+			player.rings--
+			if player.rings == 0
 				PlayerObject_SuperState = 2
 			end if
 		end if
 	end if
 	if PlayerObject_SuperState == 2
-		if stage.playerListPos == 0
+		if stage.playerListPos == CHARACTER_SONIC
 			LoadAnimation("Sonic.ani")
 		end if
 		if music.currentTrack == 2
@@ -1495,7 +1498,7 @@ function PlayerObject_SuperTransform
 		object[currentPlayer].value8 = 0
 		object[currentPlayer].visible = 1
 		CallFunction(PlayerObject_SwapPhysics)
-		if stage.playerListPos == 0
+		if stage.playerListPos == CHARACTER_SONIC
 			LoadAnimation("SuperSonic.ani")
 		end if
 		object[currentPlayer].state = PlayerObject_Transforming
@@ -1559,7 +1562,7 @@ function PlayerObject_HandleShieldAbilities
 	if object.jumpPress == 1
 		CheckEqual(specialStage.emeralds, 127)
 		temp0 = checkResult
-		CheckGreater(Player.Rings, 49)
+		CheckGreater(player.rings, 49)
 		temp0 &= checkResult
 		CheckNotEqual(PlayerObject_SuperState, 1)
 		temp0 &= checkResult
@@ -1653,7 +1656,7 @@ function PlayerObject_StartTailsFlight
 	if object.jumpPress == 1
 		CheckEqual(specialStage.emeralds, 127)
 		temp0 = checkResult
-		CheckGreater(Player.Rings, 49)
+		CheckGreater(player.rings, 49)
 		temp0 &= checkResult
 		CheckNotEqual(PlayerObject_SuperState, 1)
 		temp0 &= checkResult
@@ -1679,7 +1682,7 @@ function PlayerObject_StartKnuxGlide
 	if object.jumpPress == 1
 		CheckEqual(specialStage.emeralds, 127)
 		temp0 = checkResult
-		CheckGreater(Player.Rings, 49)
+		CheckGreater(player.rings, 49)
 		temp0 &= checkResult
 		CheckNotEqual(PlayerObject_SuperState, 1)
 		temp0 &= checkResult
@@ -1726,7 +1729,7 @@ function PlayerObject_HandleGround
 					object.value1++
 				else
 					object.animation = ANI_WAITING
-					if stage.playerListPos == 2
+					if stage.playerListPos == CHARACTER_KNUCKLES
 						object.value1++
 						if object.value1 == 834
 							object.value1 = 0
@@ -2853,7 +2856,7 @@ function PlayerObject_Hurt
 				PlaySfx(SfxName[Hurt], 0)
 			end if
 		else
-			if Player.Rings == 0
+			if player.rings == 0
 				if object.value8 != 0
 					PlaySfx(SfxName[Spike], 0)
 				else
@@ -2900,7 +2903,7 @@ function PlayerObject_Hurt
 			object.speed >>= 1
 			object.yvel >>= 1
 		end if
-		temp0 = Player.Rings
+		temp0 = player.rings
 		if temp0 > 16
 			temp1 = temp0
 			temp1 -= 16
@@ -2959,7 +2962,7 @@ function PlayerObject_Hurt
 			temp3++
 			temp2 += 32
 		loop
-		Player.Rings = 0
+		player.rings = 0
 		ringExtraLife = 100
 		break
 	case 3
@@ -3499,8 +3502,8 @@ event ObjectStartup
 		screen.cameraStyle = 0
 		screen.cameraTarget = 0
 		currentPlayer = 0
-		if stage.playerListPos > 2
-			stage.playerListPos = 0
+		if stage.playerListPos > CHARACTER_KNUCKLES
+			stage.playerListPos = CHARACTER_SONIC
 			stage.player2Enabled = 1
 		end if
 		ResetObjectEntity(0, TypeName[Player Object], 0, object[arrayPos0].xpos, object[arrayPos0].ypos)
@@ -3526,7 +3529,7 @@ event ObjectStartup
 		PlayerObject_value2 = 0
 		PlayerObject_value3 = 0
 		switch stage.playerListPos
-		case 0
+		case CHARACTER_SONIC
 			LoadAnimation("SuperSonic.ani")
 			LoadAnimation("Sonic.ani")
 			CallFunction(PlayerObject_HandleSuperPalSonic)
@@ -3535,7 +3538,7 @@ event ObjectStartup
 			object[0].value32 = PlayerObject_HandleShieldAbilities
 			ANI_PEELOUT = ANI_RUNNING
 			break
-		case 1
+		case CHARACTER_TAILS
 			object[0].type = TypeName[Tails Object]
 			object[0].propertyValue = 1
 			CallFunction(PlayerObject_HandleSuperPalTails)
@@ -3544,7 +3547,7 @@ event ObjectStartup
 			object[0].value32 = PlayerObject_StartTailsFlight
 			stage.player2Enabled = 0
 			break
-		case 2
+		case CHARACTER_KNUCKLES
 			LoadAnimation("Knuckles.ani")
 			CallFunction(PlayerObject_HandleSuperPalKnux)
 			object[0].propertyValue = 2
