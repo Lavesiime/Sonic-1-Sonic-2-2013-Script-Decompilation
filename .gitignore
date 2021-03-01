@@ -1,7 +1,3 @@
-Reg/
-__pycache__/
-SData.bin
-Config.py
 *.bak
 *.pyc
 *.exe
